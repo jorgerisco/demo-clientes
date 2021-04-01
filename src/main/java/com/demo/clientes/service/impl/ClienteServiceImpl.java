@@ -83,23 +83,17 @@ public class ClienteServiceImpl implements ClienteService {
 	public Mono<ClienteKpiResponse> getClientesKpi() {
 		return asMono(() -> clienteRepository.findAll())
 					.zipWhen( f -> getPromedioEdad(f))
-					.map(this::createResponse);
+					.flatMap( t -> createResponse(t));
 	}
 	
-	private ClienteKpiResponse createResponse(Tuple2<List<Cliente>,Double> tuple) {
-		List<Cliente> listaCliente = tuple.getT1();
-		Integer n = listaCliente.size();
-	    double promedio = tuple.getT2(); 
-		double sum = listaCliente.stream()
-			.map( c ->  Math.pow( c.getEdad() - promedio, 2))
-			.collect(Collectors.summingDouble( s -> s));
-	   	
-		double desviacionEstandar = 0;
+	private Mono<ClienteKpiResponse> createResponse(Tuple2<List<Cliente>,Double> tuple) {
 		
-		if (n > 1)
-			desviacionEstandar = Math.sqrt ( sum / ( double ) ( n - 1 ) );
-		
-		return new ClienteKpiResponse(promedio, desviacionEstandar);
+		final Integer n = tuple.getT1().size();
+		return Flux.fromStream(tuple.getT1().stream())
+					.map( c ->  Math.pow( c.getEdad() - tuple.getT2(), 2))
+					.collect(Collectors.summingDouble( s -> s))
+					.map(sum -> n > 1 ? Math.sqrt ( sum / ( double ) ( n - 1 )) : 0) 
+					.map( des ->  new ClienteKpiResponse(tuple.getT2(),des));
 	}
 
 }

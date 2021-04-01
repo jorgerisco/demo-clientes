@@ -30,17 +30,21 @@ public final class Utils {
 	
 	public static LocalDate calcularFechaProbableFallecimiento(LocalDate fechaNacimiento, double promedioEdad) {
 		
-		double anios = Math.floor(promedioEdad);
-		double meses = Math.floor((promedioEdad - anios) * 12);
-		double dias = Math.floor((((promedioEdad - anios) * 12) - meses) * 30);
-		
 		Calendar calendar = localDateToCalendar(fechaNacimiento);
 		
-		if (anios > 0)
-			calendar.add(Calendar.YEAR, (int) anios);
+		double anios = Math.floor(promedioEdad);
+		double meses = 0;
+		double dias = 0;
 		
-		if (meses > 0)
+		if (anios > 0) {	
+			calendar.add(Calendar.YEAR, (int) anios);
+			meses = Math.floor((promedioEdad - anios) * 12);
+		}
+		
+		if (meses > 0) {
 			calendar.add(Calendar.MONTH, (int) meses);
+			dias = Math.floor((((promedioEdad - anios) * 12) - meses) * 30);	
+		}
 		
 		if (dias > 0)
 			calendar.add(Calendar.DAY_OF_YEAR, (int) dias);
