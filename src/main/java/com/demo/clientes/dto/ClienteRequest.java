@@ -1,7 +1,6 @@
 package com.demo.clientes.dto;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 import javax.validation.constraints.NotEmpty;
 

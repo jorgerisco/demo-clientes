@@ -46,7 +46,7 @@ public class ClienteServiceImpl implements ClienteService {
  
 	@Override
 	public Mono<ClienteResponse> crearCliente(ClienteRequest request) {
-		 return asMono(() -> clienteRepository.save(Cliente.builder()
+		return asMono(() -> clienteRepository.save(Cliente.builder()
 					.apellido(request.getApellido())
 					.nombre(request.getNombre())
 					.edad(request.getEdad())
@@ -68,14 +68,14 @@ public class ClienteServiceImpl implements ClienteService {
  
 	@SuppressWarnings("unchecked")
 	private Mono<Double> getPromedioEdad(Iterable<Cliente> c){
-		 return Flux.fromIterable(c)
+		return Flux.fromIterable(c)
 					.collect(Collectors.averagingDouble(Utils.getEdad()));
 	}
 	
 	@SuppressWarnings({"unchecked" })
 	private Mono<Double> getPromedioEdad(){
-		 return Utils.asMono(() -> clienteRepository.findAll())
-				 	.flatMapMany( f -> Flux.fromIterable(f))
+		return Utils.asMono(() -> clienteRepository.findAll())
+					.flatMapMany( f -> Flux.fromIterable(f))
 					.collect(Collectors.averagingDouble(Utils.getEdad()));
 	}
 

@@ -1,6 +1,5 @@
 package com.demo.clientes.service.impl;
 
-import java.lang.*;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Calendar;
