@@ -20,7 +20,7 @@ public final class Utils {
 	
 	public static Calendar localDateToCalendar(LocalDate localDate) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth(), 0,0, 0);
+		calendar.set(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth(), 0, 0, 0);
 		return calendar;
 	}
 	
@@ -30,26 +30,32 @@ public final class Utils {
 	
 	public static LocalDate calcularFechaProbableFallecimiento(LocalDate fechaNacimiento, double promedioEdad) {
 		
-		Calendar calendar = localDateToCalendar(fechaNacimiento);
+		LocalDate fechaProbableFallecimiento = null;
 		
-		double anios = Math.floor(promedioEdad);
-		double meses = 0;
-		double dias = 0;
+		if (promedioEdad > calcularEdad(fechaNacimiento)) {
 		
-		if (anios > 0) {	
-			calendar.add(Calendar.YEAR, (int) anios);
-			meses = Math.floor((promedioEdad - anios) * 12);
+			Calendar calendar = localDateToCalendar(fechaNacimiento);
+			double anios = Math.floor(promedioEdad);
+			double meses = 0;
+			double dias = 0;
+			
+			if (anios > 0) {	
+				calendar.add(Calendar.YEAR, (int) anios);
+				meses = Math.floor((promedioEdad - anios) * 12);
+			}
+			
+			if (meses > 0) {
+				calendar.add(Calendar.MONTH, (int) meses);
+				dias = Math.floor((((promedioEdad - anios) * 12) - meses) * 30);	
+			}
+			
+			if (dias > 0)
+				calendar.add(Calendar.DAY_OF_YEAR, (int) dias);
+			
+			fechaProbableFallecimiento = calendarToLocalDate(calendar);
 		}
 		
-		if (meses > 0) {
-			calendar.add(Calendar.MONTH, (int) meses);
-			dias = Math.floor((((promedioEdad - anios) * 12) - meses) * 30);	
-		}
-		
-		if (dias > 0)
-			calendar.add(Calendar.DAY_OF_YEAR, (int) dias);
-		
-		return calendarToLocalDate(calendar);
+		return fechaProbableFallecimiento;
 	}
 	
 	public static <U> Mono<U> asMono(Supplier<U> supplier){
